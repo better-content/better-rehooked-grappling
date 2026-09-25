@@ -1,0 +1,35 @@
+modLoader="javafml"
+loaderVersion="[47,)"
+license="AGPL-3.0-or-later"
+issueTrackerURL="https://github.com/better-content/rehooked-intro-hooks/issues"
+
+[[mods]]
+modId="${mod_id}"
+version="${mod_version}"
+displayName="${mod_name}"
+authors="Better Content"
+displayURL="https://github.com/better-content/rehooked-intro-hooks"
+description='''
+Adds progression-oriented ReHooked hooks and mob grappling.
+'''
+
+[[dependencies.${mod_id}]]
+modId="forge"
+mandatory=true
+versionRange="[${forge_version},)"
+ordering="NONE"
+side="BOTH"
+
+[[dependencies.${mod_id}]]
+modId="minecraft"
+mandatory=true
+versionRange="[${minecraft_version},1.21)"
+ordering="NONE"
+side="BOTH"
+
+[[dependencies.${mod_id}]]
+modId="rehooked"
+mandatory=false
+versionRange="[1.8.3-1.20.1,1.9)"
+ordering="AFTER"
+side="BOTH"
