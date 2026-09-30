@@ -1,4 +1,4 @@
-package com.bettercontent.rehookedintrohooks.compat.rehooked;
+package com.bettercontent.betterrehookedgrappling.compat.rehooked;
 
 /** Pure cadence for the Ratchet Reel's repeating pull-and-hold cycle. */
 public final class IntroHookBehaviorPolicy {

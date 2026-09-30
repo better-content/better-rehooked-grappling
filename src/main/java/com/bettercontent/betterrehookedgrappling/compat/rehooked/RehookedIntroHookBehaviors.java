@@ -1,4 +1,4 @@
-package com.bettercontent.rehookedintrohooks.compat.rehooked;
+package com.bettercontent.betterrehookedgrappling.compat.rehooked;
 
 import com.oe.rehooked.handlers.hook.server.SPlayerHookHandler;
 import net.minecraft.tags.BlockTags;

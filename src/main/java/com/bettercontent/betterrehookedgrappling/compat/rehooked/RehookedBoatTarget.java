@@ -1,4 +1,4 @@
-package com.bettercontent.rehookedintrohooks.compat.rehooked;
+package com.bettercontent.betterrehookedgrappling.compat.rehooked;
 
 import net.minecraft.world.entity.vehicle.Boat;
 

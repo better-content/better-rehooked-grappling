@@ -1,4 +1,4 @@
-package com.bettercontent.rehookedintrohooks.mixin;
+package com.bettercontent.betterrehookedgrappling.mixin;
 
 import java.util.List;
 import java.util.Set;

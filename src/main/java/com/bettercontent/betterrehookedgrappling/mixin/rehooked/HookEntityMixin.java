@@ -1,9 +1,9 @@
-package com.bettercontent.rehookedintrohooks.mixin.rehooked;
+package com.bettercontent.betterrehookedgrappling.mixin.rehooked;
 
-import com.bettercontent.rehookedintrohooks.compat.rehooked.RehookedMobGrappling;
-import com.bettercontent.rehookedintrohooks.compat.rehooked.RehookedMobTarget;
-import com.bettercontent.rehookedintrohooks.compat.rehooked.RehookedBoatTarget;
-import com.bettercontent.rehookedintrohooks.compat.rehooked.IntroHookBehaviorPolicy;
+import com.bettercontent.betterrehookedgrappling.compat.rehooked.RehookedMobGrappling;
+import com.bettercontent.betterrehookedgrappling.compat.rehooked.RehookedMobTarget;
+import com.bettercontent.betterrehookedgrappling.compat.rehooked.RehookedBoatTarget;
+import com.bettercontent.betterrehookedgrappling.compat.rehooked.IntroHookBehaviorPolicy;
 import com.oe.rehooked.entities.hook.HookEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.syncher.EntityDataAccessor;

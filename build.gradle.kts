@@ -81,4 +81,4 @@ tasks.register("verifyFast") { group = "verification"; dependsOn(tasks.named("ch
 tasks.register("verifyFull") { group = "verification"; dependsOn(tasks.named("verifyFast")); dependsOn(tasks.named("headlessGameTest")) }
 tasks.withType<JavaCompile>().configureEach { options.release.set(17) }
 
-mixin { add(sourceSets.main.get(), "rehooked_intro_hooks.refmap.json"); config("rehooked_intro_hooks.mixins.json") }
+mixin { add(sourceSets.main.get(), "better_rehooked_grappling.refmap.json"); config("better_rehooked_grappling.mixins.json") }

@@ -1,8 +1,8 @@
-package com.bettercontent.rehookedintrohooks.gametest;
+package com.bettercontent.betterrehookedgrappling.gametest;
 
-import com.bettercontent.rehookedintrohooks.ModMain;
-import com.bettercontent.rehookedintrohooks.compat.rehooked.RehookedMobGrappling;
-import com.bettercontent.rehookedintrohooks.compat.rehooked.RehookedMobTarget;
+import com.bettercontent.betterrehookedgrappling.ModMain;
+import com.bettercontent.betterrehookedgrappling.compat.rehooked.RehookedMobGrappling;
+import com.bettercontent.betterrehookedgrappling.compat.rehooked.RehookedMobTarget;
 import com.oe.rehooked.entities.ReHookedEntities;
 import com.oe.rehooked.entities.hook.HookEntity;
 import net.minecraft.core.BlockPos;

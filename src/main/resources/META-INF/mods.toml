@@ -1,14 +1,14 @@
 modLoader="javafml"
 loaderVersion="[47,)"
 license="AGPL-3.0-or-later"
-issueTrackerURL="https://github.com/better-content/rehooked-intro-hooks/issues"
+issueTrackerURL="https://github.com/better-content/better-rehooked-grappling/issues"
 
 [[mods]]
 modId="${mod_id}"
 version="${mod_version}"
 displayName="${mod_name}"
 authors="Better Content"
-displayURL="https://github.com/better-content/rehooked-intro-hooks"
+displayURL="https://github.com/better-content/better-rehooked-grappling"
 description='''
 Adds progression-oriented ReHooked hooks and mob grappling.
 '''

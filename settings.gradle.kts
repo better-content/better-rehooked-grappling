@@ -7,4 +7,4 @@ pluginManagement {
     }
 }
 
-rootProject.name = "rehooked-intro-hooks"
+rootProject.name = "better-rehooked-grappling"

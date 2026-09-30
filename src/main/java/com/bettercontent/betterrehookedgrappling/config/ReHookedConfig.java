@@ -1,4 +1,4 @@
-package com.bettercontent.rehookedintrohooks.config;
+package com.bettercontent.betterrehookedgrappling.config;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.fml.ModList;
 public final class ReHookedConfig {

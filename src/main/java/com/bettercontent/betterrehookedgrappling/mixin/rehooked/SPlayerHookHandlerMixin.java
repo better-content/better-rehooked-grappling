@@ -1,7 +1,7 @@
-package com.bettercontent.rehookedintrohooks.mixin.rehooked;
+package com.bettercontent.betterrehookedgrappling.mixin.rehooked;
 
-import com.bettercontent.rehookedintrohooks.compat.rehooked.RehookedMobGrappling;
-import com.bettercontent.rehookedintrohooks.compat.rehooked.RehookedIntroHookBehaviors;
+import com.bettercontent.betterrehookedgrappling.compat.rehooked.RehookedMobGrappling;
+import com.bettercontent.betterrehookedgrappling.compat.rehooked.RehookedIntroHookBehaviors;
 import com.oe.rehooked.handlers.hook.server.SPlayerHookHandler;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;

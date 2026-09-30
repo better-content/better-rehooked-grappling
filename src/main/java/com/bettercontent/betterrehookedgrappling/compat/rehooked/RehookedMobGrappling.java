@@ -1,6 +1,6 @@
-package com.bettercontent.rehookedintrohooks.compat.rehooked;
+package com.bettercontent.betterrehookedgrappling.compat.rehooked;
 
-import com.bettercontent.rehookedintrohooks.config.ReHookedConfig;
+import com.bettercontent.betterrehookedgrappling.config.ReHookedConfig;
 import com.oe.rehooked.data.HookData;
 import com.oe.rehooked.entities.hook.HookEntity;
 import com.oe.rehooked.handlers.hook.server.SPlayerHookHandler;

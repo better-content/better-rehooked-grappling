@@ -4,8 +4,8 @@
 
 This repository contains the Better Content Forge mod **ReHooked Intro Hooks**.
 
-- Canonical mod ID: `rehooked_intro_hooks`
-- Canonical artifact: `rehooked-intro-hooks-<version>.jar`
+- Canonical mod ID: `better_rehooked_grappling`
+- Canonical artifact: `better-rehooked-grappling-<version>.jar`
 - Maven group: `com.bettercontent`
 - Java runtime: 17
 - Minecraft/Forge baseline: 1.20.1 / 47.4.13

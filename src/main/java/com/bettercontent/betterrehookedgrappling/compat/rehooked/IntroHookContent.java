@@ -1,6 +1,6 @@
-package com.bettercontent.rehookedintrohooks.compat.rehooked;
+package com.bettercontent.betterrehookedgrappling.compat.rehooked;
 
-import com.bettercontent.rehookedintrohooks.ModMain;
+import com.bettercontent.betterrehookedgrappling.ModMain;
 import com.oe.rehooked.data.HookData;
 import com.oe.rehooked.data.HookRegistry;
 import com.oe.rehooked.item.hook.HookItem;
