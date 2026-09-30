@@ -2,7 +2,7 @@
 
 ## Scope
 
-This repository contains the Better Content Forge mod **ReHooked Intro Hooks**.
+This repository contains the Better Content Forge mod **Better Rehooked Grappling**.
 
 - Canonical mod ID: `better_rehooked_grappling`
 - Canonical artifact: `better-rehooked-grappling-<version>.jar`
