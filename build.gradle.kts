@@ -50,7 +50,7 @@ dependencies {
     minecraft("net.minecraftforge:forge:$minecraftVersion-$forgeVersion")
     testImplementation("org.junit.jupiter:junit-jupiter:5.10.2")
     compileOnly(fg.deobf("curse.maven:rehooked-1096531:6341096"))
-    testRuntimeOnly(fg.deobf("curse.maven:rehooked-1096531:6341096"))
+    runtimeOnly(fg.deobf("curse.maven:rehooked-1096531:6341096"))
     compileOnly(fg.deobf("curse.maven:curios-api-309927:6418456"))
     runtimeOnly(fg.deobf("curse.maven:curios-api-309927:6418456"))
     annotationProcessor("org.spongepowered:mixin:0.8.5:processor")
@@ -74,7 +74,19 @@ tasks.processResources {
 tasks.withType<Test>().configureEach { useJUnitPlatform(); finalizedBy("jacocoTestReport") }
 jacoco { toolVersion = "0.8.12" }
 tasks.jacocoTestReport { dependsOn(tasks.test); reports { xml.required.set(true); html.required.set(true) } }
-tasks.register("headlessGameTest") { group = "verification"; dependsOn(tasks.named("runGameTestServer")) }
+tasks.matching { it.name == "runGameTestServer" }.configureEach {
+    doFirst { file("run-gametest/logs/latest.log").delete() }
+}
+tasks.register("headlessGameTest") {
+    group = "verification"
+    dependsOn(tasks.named("runGameTestServer"))
+    doLast {
+        val log = file("run-gametest/logs/latest.log")
+        check(log.isFile && log.readText().contains("All 4 required tests passed")) {
+            "four Rehooked integration GameTests did not execute and pass; see $log"
+        }
+    }
+}
 val syncGameTestStructures by tasks.registering(Copy::class) { from("src/main/resources/gameteststructures"); into("run-gametest/gameteststructures") }
 tasks.matching { it.name.startsWith("prepareRunGameTestServer") }.configureEach { dependsOn(syncGameTestStructures) }
 tasks.register("verifyFast") { group = "verification"; dependsOn(tasks.named("check")) }

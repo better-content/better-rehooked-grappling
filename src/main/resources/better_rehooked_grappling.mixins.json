@@ -3,6 +3,8 @@
   "refmap": "better_rehooked_grappling.refmap.json",
   "plugin": "com.bettercontent.betterrehookedgrappling.mixin.ModMixinPlugin",
   "mixins": [
+    "rehooked.CommonModEventsMixin",
+    "rehooked.HookVisualsConfigMixin",
     "rehooked.HookEntityMixin",
     "rehooked.SPlayerHookHandlerMixin"
   ],

@@ -5,11 +5,17 @@ import com.bettercontent.betterrehookedgrappling.compat.rehooked.RehookedMobGrap
 import com.bettercontent.betterrehookedgrappling.compat.rehooked.RehookedMobTarget;
 import com.oe.rehooked.entities.ReHookedEntities;
 import com.oe.rehooked.entities.hook.HookEntity;
+import com.mojang.authlib.GameProfile;
+import io.netty.channel.embedded.EmbeddedChannel;
+import java.util.UUID;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.network.Connection;
+import net.minecraft.network.protocol.PacketFlow;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.boss.wither.WitherBoss;
@@ -85,11 +91,18 @@ public final class RehookedMobGrapplingGameTests {
         }
 
         shot.hook().tick();
+        if (((RehookedMobTarget) shot.hook()).betterContent$getMobTargetId() != shot.mob().getId()
+                || shot.hook().getState() != HookEntity.State.PULLING) {
+            helper.fail("Precondition failed: hook did not attach to the target mob");
+            return;
+        }
         shot.mob().discard();
         shot.hook().tick();
 
         if (shot.hook().getState() != HookEntity.State.RETRACTING) {
-            helper.fail("A removed grapple target must enter ReHooked's retracting state");
+            helper.fail("A removed grapple target must retract; state=" + shot.hook().getState()
+                    + ", target=" + ((RehookedMobTarget) shot.hook()).betterContent$getMobTargetId()
+                    + ", owner=" + shot.hook().getOwner());
             return;
         }
         helper.succeed();
@@ -102,9 +115,14 @@ public final class RehookedMobGrapplingGameTests {
             final boolean solidWall
     ) {
         final ServerLevel level = helper.getLevel();
-        final ServerPlayer owner = helper.makeMockServerPlayerInLevel();
+        final ServerPlayer owner = new ServerPlayer(level.getServer(), level,
+                new GameProfile(UUID.randomUUID(), "test-hook-owner"));
+        final Connection network = new Connection(PacketFlow.SERVERBOUND);
+        new EmbeddedChannel(network);
+        owner.connection = new ServerGamePacketListenerImpl(level.getServer(), network, owner);
         final Vec3 ownerPosition = Vec3.atCenterOf(helper.absolutePos(new BlockPos(1, 2, 1)));
         owner.setPos(ownerPosition.x, ownerPosition.y, ownerPosition.z);
+        level.addFreshEntity(owner);
 
         final Zombie mob = EntityType.ZOMBIE.create(level);
         if (mob == null) {
