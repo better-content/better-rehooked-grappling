@@ -1,21 +1,9 @@
-# AGENTS.md
+# Better Rehooked Grappling
 
-## Scope
+Forge 1.20.1 / Java 17; mod ID `better_rehooked_grappling`.
+Deterministic checks: `./gradlew verifyFast`; runtime/GameTest changes: `./gradlew verifyFull`.
+Stage: `./gradlew stageRuntimeJar`, `build/libs/better-rehooked-grappling-<version>.jar`.
 
-This repository contains the Better Content Forge mod **Better Rehooked Grappling**.
-
-- Canonical mod ID: `better_rehooked_grappling`
-- Canonical artifact: `better-rehooked-grappling-<version>.jar`
-- Maven group: `com.bettercontent`
-- Java runtime: 17
-- Minecraft/Forge baseline: 1.20.1 / 47.4.13
-
-## Commit discipline
-
-Commit after each coherent completed change. Run documented validation before committing and push the current branch.
-
-## Validation
-
-Run `./gradlew verifyFast` for deterministic checks. Run `./gradlew verifyFull` for runtime or GameTest changes. Stage deployable runtime artifacts with `./gradlew stageRuntimeJar`.
-
-Do not commit build outputs, runtime worlds, logs, IDE state, or downloaded dependency JARs.
+Read [shared workspace policy](../../better-content-modpack/docs/policies/workspace.md)
+and its linked testing/disposal policies. Docs-only changes use the shared document check
+and `git diff --check`, not unrelated runtime builds.
