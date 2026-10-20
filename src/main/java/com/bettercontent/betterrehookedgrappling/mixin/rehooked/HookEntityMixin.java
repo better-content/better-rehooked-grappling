@@ -1,6 +1,9 @@
 package com.bettercontent.betterrehookedgrappling.mixin.rehooked;
 
 import com.bettercontent.betterrehookedgrappling.compat.rehooked.RehookedMobGrappling;
+import com.bettercontent.betterrehookedgrappling.compat.rehooked.HookTargetOutcome;
+import com.bettercontent.betterrehookedgrappling.diagnostics.PlaytestDiagnostics;
+import com.bettercontent.betterrehookedgrappling.diagnostics.PlaytestLog;
 import com.bettercontent.betterrehookedgrappling.compat.rehooked.RehookedMobTarget;
 import com.bettercontent.betterrehookedgrappling.compat.rehooked.RehookedBoatTarget;
 import com.bettercontent.betterrehookedgrappling.compat.rehooked.IntroHookBehaviorPolicy;
@@ -77,6 +80,7 @@ public abstract class HookEntityMixin extends Projectile implements RehookedMobT
         setHitPos(boat.blockPosition());
         setReason(HookEntity.Reason.HIT);
         setState(HookEntity.State.PULLING);
+        betterContent$outcome(HookTargetOutcome.BOAT_HIT);
         ci.cancel();
     }
 
@@ -91,6 +95,7 @@ public abstract class HookEntityMixin extends Projectile implements RehookedMobT
             setHitPos(mob.blockPosition());
             setReason(HookEntity.Reason.HIT);
             setState(HookEntity.State.PULLING);
+            betterContent$outcome(HookTargetOutcome.MOB_HIT);
             ci.cancel();
         });
     }
@@ -137,6 +142,15 @@ public abstract class HookEntityMixin extends Projectile implements RehookedMobT
             setHitPos(caughtPos);
             setReason(HookEntity.Reason.HIT);
             setState(HookEntity.State.PULLING);
+            betterContent$outcome(HookTargetOutcome.BLOCK_CATCH);
+        }
+    }
+
+    @Unique
+    private void betterContent$outcome(HookTargetOutcome outcome) {
+        if (PlaytestDiagnostics.LOG.enabled("attachment")) {
+            PlaytestDiagnostics.LOG.event("attachment", "hook.target", "server", outcome.result(), outcome.reason(),
+                    () -> PlaytestLog.fields("hook", getUUID(), "profile", ((HookEntity) (Object) this).getHookType(), "tick", tickCount));
         }
     }
 
@@ -152,6 +166,7 @@ public abstract class HookEntityMixin extends Projectile implements RehookedMobT
                     setHitPos(null);
                     setReason(HookEntity.Reason.MISS);
                     setState(HookEntity.State.RETRACTING);
+                    betterContent$outcome(HookTargetOutcome.BOAT_REMOVED);
                 }
                 return;
             }
@@ -174,6 +189,7 @@ public abstract class HookEntityMixin extends Projectile implements RehookedMobT
                 setHitPos(null);
                 setReason(HookEntity.Reason.MISS);
                 setState(HookEntity.State.RETRACTING);
+                betterContent$outcome(HookTargetOutcome.MOB_REMOVED);
             }
             return;
         }
@@ -184,6 +200,7 @@ public abstract class HookEntityMixin extends Projectile implements RehookedMobT
                 setHitPos(null);
                 setReason(HookEntity.Reason.MISS);
                 setState(HookEntity.State.RETRACTING);
+                betterContent$outcome(HookTargetOutcome.MOB_INELIGIBLE);
             }
             return;
         }
