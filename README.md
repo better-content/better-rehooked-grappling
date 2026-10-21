@@ -5,6 +5,15 @@
 This repository owns its mod-specific behavior and authoring inputs. Read [local instructions](AGENTS.md)
 and the [shared documentation/policy index](../../better-content-modpack/docs/README.md).
 
+## Cold source native fixture
+
+`verifyFull` binds one fresh `build/gametest/<UUID>` to Forge's actual RunConfig, settings,
+structures and audited sink. No previous latest.log/world or ordinary/visual instance is deleted
+or adopted. CREATE_NEW settings preserve existing bytes exactly. Four completed/passed native
+cases and strict latest/debug ERROR/FATAL/mixin-failure checks remain required, with pure
+creation/preservation and missing/count-mismatch/duplicate/severity controls. Retain prior build
+outputs before `clean`; historical warm passes are not proof of this new cold profile.
+
 ## Bounded playtest diagnostics
 
 Loader SLF4J `bc.playtest.better_rehooked_grappling.*` reports INFO startup/provider/own-source

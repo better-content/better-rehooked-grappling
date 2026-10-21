@@ -74,14 +74,11 @@ tasks.processResources {
 tasks.withType<Test>().configureEach { useJUnitPlatform(); finalizedBy("jacocoTestReport") }
 jacoco { toolVersion = "0.8.12" }
 tasks.jacocoTestReport { dependsOn(tasks.test); reports { xml.required.set(true); html.required.set(true) } }
-tasks.matching { it.name == "runGameTestServer" }.configureEach {
-    doFirst { file("run-gametest/logs/latest.log").delete() }
-}
 tasks.register("headlessGameTest") {
     group = "verification"
     dependsOn(tasks.named("runGameTestServer"))
     doLast {
-        val log = file("run-gametest/logs/latest.log")
+        val log = (project.extra["bcNativeGameTestDirectory"] as java.io.File).resolve("logs/latest.log")
         check(log.isFile && log.readText().contains("All 4 required tests passed")) {
             "four Rehooked integration GameTests did not execute and pass; see $log"
         }
@@ -94,3 +91,5 @@ tasks.register("verifyFull") { group = "verification"; dependsOn(tasks.named("ve
 tasks.withType<JavaCompile>().configureEach { options.release.set(17) }
 
 mixin { add(sourceSets.main.get(), "better_rehooked_grappling.refmap.json"); config("better_rehooked_grappling.mixins.json") }
+
+apply(from = "gradle/native-gametest-fixture.gradle")
