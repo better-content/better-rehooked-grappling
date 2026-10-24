@@ -9,10 +9,18 @@ and the [shared documentation/policy index](../../better-content-modpack/docs/RE
 
 `verifyFull` binds one fresh `build/gametest/<UUID>` to Forge's actual RunConfig, settings,
 structures and audited sink. No previous latest.log/world or ordinary/visual instance is deleted
-or adopted. CREATE_NEW settings preserve existing bytes exactly. Four completed/passed native
+or adopted. CREATE_NEW settings preserve existing bytes exactly. Five completed/passed native
 cases and strict latest/debug ERROR/FATAL/mixin-failure checks remain required, with pure
 creation/preservation and missing/count-mismatch/duplicate/severity controls. Retain prior build
 outputs before `clean`; historical warm passes are not proof of this new cold profile.
+
+`attachedHookMovesMonsterTowardPlayer` equips a real wooden hook through Curios, attaches
+its projectile to a zombie and drives ReHooked's native server handler over world ticks.
+It requires at least 0.25 blocks of monster displacement toward the stationary owner in
+12 ticks, a matching reduction in horizontal separation and continued attachment. An
+unhooked goal-free/no-gravity zombie must remain stationary as the causal control.
+Goals are removed without `NoAI`, which also disables server-authoritative travel physics. This is
+server-side movement acceptance, not client rope rendering or full-pack acceptance.
 
 ## Bounded playtest diagnostics
 

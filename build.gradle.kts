@@ -79,8 +79,8 @@ tasks.register("headlessGameTest") {
     dependsOn(tasks.named("runGameTestServer"))
     doLast {
         val log = (project.extra["bcNativeGameTestDirectory"] as java.io.File).resolve("logs/latest.log")
-        check(log.isFile && log.readText().contains("All 4 required tests passed")) {
-            "four Rehooked integration GameTests did not execute and pass; see $log"
+        check(log.isFile && log.readText().contains("All 5 required tests passed")) {
+            "five Rehooked integration GameTests did not execute and pass; see $log"
         }
     }
 }

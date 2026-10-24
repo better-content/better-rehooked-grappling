@@ -5,6 +5,8 @@ import com.bettercontent.betterrehookedgrappling.compat.rehooked.RehookedMobGrap
 import com.bettercontent.betterrehookedgrappling.compat.rehooked.RehookedMobTarget;
 import com.oe.rehooked.entities.ReHookedEntities;
 import com.oe.rehooked.entities.hook.HookEntity;
+import com.oe.rehooked.handlers.hook.def.IServerPlayerHookHandler;
+import com.oe.rehooked.item.ReHookedItems;
 import com.mojang.authlib.GameProfile;
 import io.netty.channel.embedded.EmbeddedChannel;
 import java.util.UUID;
@@ -21,6 +23,7 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.boss.wither.WitherBoss;
 import net.minecraft.world.entity.monster.Zombie;
 import net.minecraft.world.level.block.Blocks;
+import top.theillusivec4.curios.api.CuriosApi;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.gametest.PrefixGameTestTemplate;
 
@@ -106,6 +109,71 @@ public final class RehookedMobGrapplingGameTests {
             return;
         }
         helper.succeed();
+    }
+
+    @GameTest(templateNamespace = ModMain.MOD_ID, template = "empty", timeoutTicks = 100)
+    public static void attachedHookMovesMonsterTowardPlayer(final GameTestHelper helper) {
+        final TestShot shot = createShot(helper, 4.5D, 7, false);
+        final ServerPlayer owner = (ServerPlayer) shot.hook().getOwner();
+        // Remove walking, gravity and collisions with the owner as alternative causes of motion.
+        shot.mob().removeAllGoals(goal -> true);
+        shot.mob().targetSelector.removeAllGoals(goal -> true);
+        shot.mob().setNoGravity(true);
+        owner.setNoGravity(true);
+        shot.mob().setDeltaMovement(Vec3.ZERO);
+        for (int x = 0; x <= 7; x++) {
+            for (int z = 0; z <= 5; z++) {
+                helper.setBlock(new BlockPos(x, 1, z), Blocks.STONE);
+            }
+        }
+        final Zombie control = EntityType.ZOMBIE.create(helper.getLevel());
+        if (control == null) throw new IllegalStateException("Unable to create unhooked control");
+        control.removeAllGoals(goal -> true);
+        control.targetSelector.removeAllGoals(goal -> true);
+        control.setNoGravity(true);
+        control.setPos(shot.mob().getX(), shot.mob().getY(), shot.mob().getZ() + 3.0D);
+        helper.getLevel().addFreshEntity(control);
+        final Vec3 start = shot.mob().position();
+        final Vec3 controlStart = control.position();
+        final Vec3 towardOwner = owner.position().subtract(start).multiply(1.0D, 0.0D, 1.0D).normalize();
+        final double startDistance = owner.position().subtract(start).horizontalDistance();
+
+        // Equip the actual item: do not stub HookData or call the custom pull helper directly.
+        CuriosApi.getCuriosInventory(owner).resolve().orElseThrow()
+                .getStacksHandler("hook").orElseThrow().getStacks()
+                .setStackInSlot(0, ReHookedItems.WOOD_HOOK.get().getDefaultInstance());
+        final IServerPlayerHookHandler handler = IServerPlayerHookHandler.FromPlayer(owner)
+                .resolve().orElseThrow();
+        handler.setOwner(owner);
+        if (handler.getHookData().isEmpty()) {
+            helper.fail("Equipped wooden hook must resolve native HookData");
+            return;
+        }
+        shot.hook().tick();
+        if (((RehookedMobTarget) shot.hook()).betterContent$getMobTargetId() != shot.mob().getId()) {
+            helper.fail("Precondition failed: hook did not attach to the monster");
+            return;
+        }
+        if (!handler.getHooks().contains(shot.hook())) handler.addHook(shot.hook());
+
+        // This fixture's ServerPlayer is not a connected PlayerList member. Drive the same
+        // native handler update used by ReHooked's server event; let world ticks move the mob.
+        helper.onEachTick(handler::update);
+        helper.runAfterDelay(12, () -> {
+            final double displacement = shot.mob().position().subtract(start).dot(towardOwner);
+            final double distance = owner.position().subtract(shot.mob().position()).horizontalDistance();
+            if (shot.hook().getState() != HookEntity.State.PULLING
+                    || ((RehookedMobTarget) shot.hook()).betterContent$getMobTargetId() != shot.mob().getId()) {
+                helper.fail("Hook must stay attached while the monster moves");
+            } else if (displacement < 0.25D || distance > startDistance - 0.25D) {
+                helper.fail("Hook must physically move the monster toward the player by >= 0.25 blocks; "
+                        + "displacement=" + displacement + ", distance=" + distance + ", initial=" + startDistance);
+            } else if (control.position().subtract(controlStart).horizontalDistance() > 0.01D) {
+                helper.fail("Unhooked goal-free control moved; fixture cannot attribute motion to grappling");
+            } else {
+                helper.succeed();
+            }
+        });
     }
 
     private static TestShot createShot(
