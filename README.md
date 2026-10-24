@@ -1,10 +1,5 @@
 # Better Rehooked Grappling
 
-## Scope and authority
-
-This repository owns its mod-specific behavior and authoring inputs. Read [local instructions](AGENTS.md)
-and the [shared documentation/policy index](../../better-content-modpack/docs/README.md).
-
 ## Cold source native fixture
 
 `verifyFull` binds one fresh `build/gametest/<UUID>` to Forge's actual RunConfig, settings,
