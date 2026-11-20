@@ -4,7 +4,7 @@ def nativeDirectory = layout.buildDirectory.dir('gametest/' + nativeToken).get()
 ext.bcNativeGameTestDirectory = nativeDirectory
 minecraft.runs.gameTestServer.workingDirectory(nativeDirectory)
 def expected = project.name == 'better-block-placement-preview' ? 6 :
-        project.name == 'better-rehooked-grappling' ? 5 :
+        project.name == 'better-rehooked-grappling' ? 6 :
         project.name == 'better-rpg-progression' ? 6 :
         project.findProperty('colonyWithoutBees') == 'true' ? 74 :
         project.findProperty('backpackWithoutCurios') == 'true' ? 73 : 76
@@ -36,6 +36,14 @@ tasks.matching { it.name == 'runGameTestServer' }.configureEach {
         if (file(minecraft.runs.gameTestServer.workingDirectory).canonicalFile != nativeDirectory.canonicalFile)
             throw new GradleException('Configured native RunConfig/setup directory mismatch')
         ensureNativeProperties(nativeDirectory)
+        if (project.name == 'better-rehooked-grappling') {
+            // DT 1.4.10 ships an invalid optional guide recipe (an empty conditional entry).
+            // Override only in this disposable world; the hook/leaf blocks and error gate stay real.
+            project.copy {
+                from('gradle/gametest-dt-leaves-datapack')
+                into(new File(nativeDirectory, 'world/datapacks/dt-leaves-native-fixture'))
+            }
+        }
     }
     doLast {
         validateNativeLog(new File(nativeDirectory, 'logs/latest.log'), expected)

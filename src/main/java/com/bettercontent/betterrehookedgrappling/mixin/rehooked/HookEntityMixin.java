@@ -7,8 +7,10 @@ import com.bettercontent.betterrehookedgrappling.diagnostics.PlaytestLog;
 import com.bettercontent.betterrehookedgrappling.compat.rehooked.RehookedMobTarget;
 import com.bettercontent.betterrehookedgrappling.compat.rehooked.RehookedBoatTarget;
 import com.bettercontent.betterrehookedgrappling.compat.rehooked.IntroHookBehaviorPolicy;
+import com.bettercontent.betterrehookedgrappling.compat.rehooked.PassableLeafHitPolicy;
 import com.oe.rehooked.entities.hook.HookEntity;
 import net.minecraft.core.BlockPos;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -18,11 +20,18 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.entity.vehicle.Boat;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.ClipContext;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -61,6 +70,28 @@ public abstract class HookEntityMixin extends Projectile implements RehookedMobT
     private void betterContent$defineMobTarget(final CallbackInfo ci) {
         entityData.define(BETTER_CONTENT_MOB_TARGET, -1);
         entityData.define(BETTER_CONTENT_BOAT_TARGET, -1);
+    }
+
+    // ReHooked uses a COLLIDER ray with the projectile as context. Dynamic Trees makes
+    // projectile collision empty on leaves; give those leaves an outline shape in this
+    // hook-only ray so the first leaf block, not the trunk behind it, is the block hit.
+    @Redirect(method = "tickShot", at = @At(value = "INVOKE",
+            target = "Lcom/oe/rehooked/utils/VectorHelper;getFromEntityAndAngle(Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/phys/Vec3;D)Lnet/minecraft/world/phys/BlockHitResult;"))
+    private BlockHitResult betterContent$hitPassableLeaves(final Entity entity, final Vec3 motion,
+                                                           final double distance) {
+        final Vec3 start = entity.position();
+        final Vec3 end = entity.getEyePosition().add(motion.scale(distance));
+        return entity.level().clip(new ClipContext(start, end, ClipContext.Block.COLLIDER,
+                ClipContext.Fluid.NONE, entity) {
+            @Override
+            public VoxelShape getBlockShape(final BlockState state, final BlockGetter level, final BlockPos pos) {
+                final VoxelShape collision = super.getBlockShape(state, level, pos);
+                if (PassableLeafHitPolicy.useLeafShape(state.is(BlockTags.LEAVES), collision.isEmpty())) {
+                    return state.getShape(level, pos, CollisionContext.empty());
+                }
+                return collision;
+            }
+        });
     }
 
     @Inject(method = "tickShot", at = @At("HEAD"), cancellable = true)

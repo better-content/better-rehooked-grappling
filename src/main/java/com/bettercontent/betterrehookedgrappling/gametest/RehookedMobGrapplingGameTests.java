@@ -11,6 +11,8 @@ import com.mojang.authlib.GameProfile;
 import io.netty.channel.embedded.EmbeddedChannel;
 import java.util.UUID;
 import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.network.Connection;
@@ -22,7 +24,10 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.boss.wither.WitherBoss;
 import net.minecraft.world.entity.monster.Zombie;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraftforge.registries.ForgeRegistries;
 import top.theillusivec4.curios.api.CuriosApi;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.gametest.PrefixGameTestTemplate;
@@ -61,6 +66,34 @@ public final class RehookedMobGrapplingGameTests {
         final RehookedMobTarget target = (RehookedMobTarget) hook;
         if (target.betterContent$getMobTargetId() != -1) {
             helper.fail("A newly constructed hook must start without a mob grapple target");
+            return;
+        }
+        helper.succeed();
+    }
+
+    @GameTest(templateNamespace = ModMain.MOD_ID, template = "empty", timeoutTicks = 100)
+    public static void projectilePassableDynamicLeavesAreFirstBlockHit(final GameTestHelper helper) {
+        final TestShot shot = createShot(helper, 9.0D, 0, false);
+        final Block leaf = ForgeRegistries.BLOCKS.getValue(new ResourceLocation("dynamictrees", "oak_leaves"));
+        if (leaf == null || leaf == Blocks.AIR) {
+            helper.fail("Pinned Dynamic Trees oak leaves must be loaded in the native fixture");
+            return;
+        }
+        final BlockPos leafPos = new BlockPos(4, 3, 1);
+        helper.setBlock(leafPos, leaf.defaultBlockState());
+        helper.setBlock(new BlockPos(6, 3, 1), Blocks.STONE);
+        final BlockPos absoluteLeafPos = helper.absolutePos(leafPos);
+        final var state = helper.getLevel().getBlockState(absoluteLeafPos);
+        if (!state.is(BlockTags.LEAVES)
+                || !state.getCollisionShape(helper.getLevel(), absoluteLeafPos, CollisionContext.of(shot.hook())).isEmpty()
+                || state.getShape(helper.getLevel(), absoluteLeafPos, CollisionContext.empty()).isEmpty()) {
+            helper.fail("Precondition failed: Dynamic Trees leaf must be visible but passable to the hook projectile");
+            return;
+        }
+        shot.hook().tick();
+        if (shot.hook().getState() != HookEntity.State.PULLING
+                || !shot.hook().getHitPos().filter(absoluteLeafPos::equals).isPresent()) {
+            helper.fail("Expected the leaf block itself to be the first grapple hit, not the stone behind it");
             return;
         }
         helper.succeed();

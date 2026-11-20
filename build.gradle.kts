@@ -51,6 +51,8 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter:5.10.2")
     compileOnly(fg.deobf("curse.maven:rehooked-1096531:6341096"))
     runtimeOnly(fg.deobf("curse.maven:rehooked-1096531:6341096"))
+    // Dev/GameTest runtime only: validate hooks against the pack's pinned projectile-passable leaves.
+    runtimeOnly(fg.deobf("curse.maven:dynamic-trees-252818:7502488"))
     compileOnly(fg.deobf("curse.maven:curios-api-309927:6418456"))
     runtimeOnly(fg.deobf("curse.maven:curios-api-309927:6418456"))
     annotationProcessor("org.spongepowered:mixin:0.8.5:processor")
@@ -79,8 +81,8 @@ tasks.register("headlessGameTest") {
     dependsOn(tasks.named("runGameTestServer"))
     doLast {
         val log = (project.extra["bcNativeGameTestDirectory"] as java.io.File).resolve("logs/latest.log")
-        check(log.isFile && log.readText().contains("All 5 required tests passed")) {
-            "five Rehooked integration GameTests did not execute and pass; see $log"
+        check(log.isFile && log.readText().contains("All 6 required tests passed")) {
+            "six Rehooked integration GameTests did not execute and pass; see $log"
         }
     }
 }
